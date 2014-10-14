@@ -21,7 +21,7 @@
 	<parent>
     	<groupId>net.tomp2p</groupId>
     	<artifactId>tomp2p-parent</artifactId>
-    	<version>5.0-Alpha1-SNAPSHOT</version>
+    	<version>5.0-Alpha1.55844fb-SNAPSHOT</version>
   	</parent>
 	
 	<artifactId>tomp2p-task</artifactId>
