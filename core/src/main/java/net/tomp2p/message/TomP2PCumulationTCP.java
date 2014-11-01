@@ -52,7 +52,8 @@ public class TomP2PCumulationTCP extends ChannelInboundHandlerAdapter {
 			//the cumulation buffer now maintains the buffer buf, so we can release it here
 			//buf.release();
 			if (!cumulation.isReadable()) {
-                cumulation.release();
+                if(cumulation.refCnt() == 1)
+                    cumulation.release();
                 cumulation = null;
             } // no need to discard bytes as this was done in the decoder already
 		}
@@ -103,7 +104,8 @@ public class TomP2PCumulationTCP extends ChannelInboundHandlerAdapter {
             throw new Exception(t);
 		} finally {
 			if (cumulation != null) {
-				cumulation.release();
+                if(cumulation.refCnt() == 1)
+                    cumulation.release();
 				cumulation = null;
 			}
 			ctx.fireChannelInactive();

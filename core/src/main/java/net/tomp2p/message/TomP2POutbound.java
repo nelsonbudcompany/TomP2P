@@ -86,7 +86,8 @@ public class TomP2POutbound extends ChannelOutboundHandlerAdapter {
                     encoder.reset();
                 }
             } else {
-                buf.release();
+                if(buf.refCnt() == 1)
+                    buf.release();
                 ctx.write(Unpooled.EMPTY_BUFFER, promise);
             }
             buf = null;
@@ -96,7 +97,8 @@ public class TomP2POutbound extends ChannelOutboundHandlerAdapter {
         }
         finally {
             if (buf != null) {
-                buf.release();
+                if(buf.refCnt() == 1)
+                    buf.release();
             }
         }
     }

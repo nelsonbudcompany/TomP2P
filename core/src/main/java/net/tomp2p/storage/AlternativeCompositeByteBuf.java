@@ -203,7 +203,8 @@ public class AlternativeCompositeByteBuf extends ByteBuf {
 
 		freed = true;
 		for (Component c : components) {
-			c.buf.release();
+            if(c.buf.refCnt() == 1)
+                c.buf.release();
 		}
 		components.clear();
 
@@ -253,7 +254,8 @@ public class AlternativeCompositeByteBuf extends ByteBuf {
 				Component c = i.previous();
 				if (bytesToTrim >= c.buf.capacity()) {
 					bytesToTrim -= c.buf.capacity();
-					c.buf.release();
+                    if(c.buf.refCnt() == 1)
+                        c.buf.release();
 					i.remove();
 					continue;
 				}
@@ -295,7 +297,8 @@ public class AlternativeCompositeByteBuf extends ByteBuf {
 				break;
 			}
 			//We want to use this buffer, so mark is as used
-			b.retain();
+            if(b.refCnt() > 0)
+                b.retain();
 			Component c = new Component(b.order(ByteOrder.BIG_ENDIAN)
 					.duplicate());
 			final int size = components.size();
@@ -501,7 +504,8 @@ public class AlternativeCompositeByteBuf extends ByteBuf {
 			}
 			
 			if(readerIndex >= c.endOffset()) {
-				c.buf.release();
+                if(c.buf.refCnt() == 1)
+                    c.buf.release();
 				iterator.remove();
 				isOffsetAdjustment = true;
 				int adjust = c.endOffset() - c.offset;

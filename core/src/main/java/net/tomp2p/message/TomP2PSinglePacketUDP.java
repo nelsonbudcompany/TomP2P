@@ -50,7 +50,8 @@ public class TomP2PSinglePacketUDP extends ChannelInboundHandlerAdapter {
         	LOG.error("Error in UDP decoding", t);
             throw new Exception(t);
         } finally {
-            buf.release();
+            if(buf.refCnt() == 1)
+                buf.release();
         }
     }
 

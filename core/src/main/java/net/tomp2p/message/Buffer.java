@@ -63,7 +63,8 @@ public class Buffer {
     public Buffer addComponent(final ByteBuf slice) {
         if (buffer instanceof CompositeByteBuf) {
             CompositeByteBuf cbb = (CompositeByteBuf) buffer;
-            slice.retain();
+            if(slice.refCnt() > 0)
+                slice.retain();
             cbb.addComponent(slice);
             cbb.writerIndex(cbb.writerIndex() + slice.readableBytes());
         } else {
@@ -79,7 +80,8 @@ public class Buffer {
     
     @Override
     protected void finalize() throws Throwable {
-        buffer.release();       
+        if(buffer.refCnt() == 1)
+            buffer.release();       
     }
     
     @Override

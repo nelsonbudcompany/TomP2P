@@ -42,7 +42,8 @@ public class DataBuffer {
 	public DataBuffer(final ByteBuf buf) {
 		buffers = new ArrayList<ByteBuf>(1);
 		buffers.add(buf.slice());
-		buf.retain();
+        if(buf.refCnt() > 0)
+		    buf.retain();
 	}
 
 	private DataBuffer(final List<ByteBuf> buffers, boolean refCount) {
@@ -50,7 +51,8 @@ public class DataBuffer {
 		for (final ByteBuf buf : buffers) {
 			this.buffers.add(buf.duplicate());
 			if(refCount) {
-				buf.retain();
+                if(buf.refCnt() > 0)
+                    buf.retain();
 			}
 		}
 	}
@@ -59,7 +61,8 @@ public class DataBuffer {
 		synchronized (dataBuffer.buffers) {
 			for (final ByteBuf buf : dataBuffer.buffers) {
 				this.buffers.add(buf.duplicate());
-				buf.retain();
+                if(buf.refCnt() > 0)
+                    buf.retain();
 			}
 		}
 		return this;
@@ -177,14 +180,16 @@ public class DataBuffer {
 					// this is already a slice
 					buffers.add(decom);
 				}
-				decom.retain();
+                if(decom.refCnt() > 0)
+                    decom.retain();
 			}
 
 		} else {
 			synchronized (buffers) {
 				buffers.add(buf.slice(index, length));
 			}
-			buf.retain();
+            if(buf.refCnt() > 0)
+                buf.retain();
 		}
 
 		alreadyTransferred += length;
@@ -223,7 +228,9 @@ public class DataBuffer {
 		// finalizer
 		try {
 			for (ByteBuf buf : buffers) {
-				buf.release();
+				if(buf.refCnt() == 1)
+                    if(buf.refCnt() == 1)
+                        buf.release();
 			}
 		} catch (Throwable t) {
 			throw t;
