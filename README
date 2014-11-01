@@ -31,7 +31,7 @@ Upload artifacts to Artifactory:
 
 Re-apply this README:
 
-    git show bitsquare-published-6fc2241:README > README
+    git show bitsquare-published-91276e8:README > README
     git add README
     git commit -m"Add README with publication instructions"
 
